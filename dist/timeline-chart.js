@@ -1,10 +1,29 @@
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = function() {
+    function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+            var descriptor = props[i];
+            descriptor.enumerable = descriptor.enumerable || false;
+            descriptor.configurable = true;
+            if ("value" in descriptor) descriptor.writable = true;
+            Object.defineProperty(target, descriptor.key, descriptor);
+        }
+    }
+    return function(Constructor, protoProps, staticProps) {
+        if (protoProps) defineProperties(Constructor.prototype, protoProps);
+        if (staticProps) defineProperties(Constructor, staticProps);
+        return Constructor;
+    };
+}();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+    }
+}
 
-var TimelineChart = function () {
+var TimelineChart = function() {
     function TimelineChart(element, data, opts) {
         _classCallCheck(this, TimelineChart);
 
@@ -14,7 +33,7 @@ var TimelineChart = function () {
 
         var options = this.extendOptions(opts);
 
-        var allElements = data.reduce(function (agg, e) {
+        var allElements = data.reduce(function(agg, e) {
             return agg.concat(e.data);
         }, []);
 
@@ -32,9 +51,9 @@ var TimelineChart = function () {
         };
 
         var width = elementWidth - margin.left - margin.right;
-        var height = elementHeight - margin.top - margin.bottom;
-
-        var groupWidth = 200;
+        //var height = elementHeight - margin.top - margin.bottom;
+        var height=500;
+        var groupWidth = 300;
 
         var x = d3.time.scale().domain([minDt, maxDt]).range([groupWidth, width]);
 
@@ -51,51 +70,51 @@ var TimelineChart = function () {
         svg.append('g').attr('class', 'x axis').attr('transform', 'translate(0,' + height + ')').call(xAxis);
 
         var groupHeight = height / data.length;
-        var groupSection = svg.selectAll('.group-section').data(data).enter().append('line').attr('class', 'group-section').attr('x1', 0).attr('x2', width).attr('y1', function (d, i) {
+        var groupSection = svg.selectAll('.group-section').data(data).enter().append('line').attr('class', 'group-section').attr('x1', 0).attr('x2', width).attr('y1', function(d, i) {
             return groupHeight * (i + 1);
-        }).attr('y2', function (d, i) {
+        }).attr('y2', function(d, i) {
             return groupHeight * (i + 1);
         });
 
-        var groupLabels = svg.selectAll('.group-label').data(data).enter().append('text').attr('class', 'group-label').attr('x', 0).attr('y', function (d, i) {
+        var groupLabels = svg.selectAll('.group-label').data(data).enter().append('text').attr('class', 'group-label').attr('x', 0).attr('y', function(d, i) {
             return groupHeight * i + groupHeight / 2 + 5.5;
-        }).attr('dx', '0.5em').text(function (d) {
+        }).attr('dx', '0.5em').text(function(d) {
             return d.label;
         });
 
         var lineSection = svg.append('line').attr('x1', groupWidth).attr('x2', groupWidth).attr('y1', 0).attr('y2', height).attr('stroke', 'black');
 
-        var groupIntervalItems = svg.selectAll('.group-interval-item').data(data).enter().append('g').attr('clip-path', 'url(#chart-content)').attr('class', 'item').attr('transform', function (d, i) {
+        var groupIntervalItems = svg.selectAll('.group-interval-item').data(data).enter().append('g').attr('clip-path', 'url(#chart-content)').attr('class', 'item').attr('transform', function(d, i) {
             return 'translate(0, ' + groupHeight * i + ')';
-        }).selectAll('.dot').data(function (d) {
-            return d.data.filter(function (_) {
+        }).selectAll('.dot').data(function(d) {
+            return d.data.filter(function(_) {
                 return _.type === TimelineChart.TYPE.INTERVAL;
             });
         }).enter();
 
         var intervalBarHeight = 0.8 * groupHeight;
         var intervalBarMargin = (groupHeight - intervalBarHeight) / 2;
-        var intervals = groupIntervalItems.append('rect').attr('class', 'interval').attr('width', function (d) {
+        var intervals = groupIntervalItems.append('rect').attr('class', 'interval').attr('width', function(d) {
             return x(d.to) - x(d.from);
-        }).attr('height', intervalBarHeight).attr('y', intervalBarMargin).attr('x', function (d) {
+        }).attr('height', intervalBarHeight).attr('y', intervalBarMargin).attr('x', function(d) {
             return x(d.from);
         });
 
-        var intervalTexts = groupIntervalItems.append('text').text(function (d) {
+        var intervalTexts = groupIntervalItems.append('text').text(function(d) {
             return d.label;
-        }).attr('fill', 'white').attr('class', 'interval-text').attr('y', groupHeight / 2 + 5).attr('x', function (d) {
+        }).attr('fill', 'white').attr('class', 'interval-text').attr('y', groupHeight / 2 + 5).attr('x', function(d) {
             return x(d.from);
         });
 
-        var groupDotItems = svg.selectAll('.group-dot-item').data(data).enter().append('g').attr('clip-path', 'url(#chart-content)').attr('class', 'item').attr('transform', function (d, i) {
+        var groupDotItems = svg.selectAll('.group-dot-item').data(data).enter().append('g').attr('clip-path', 'url(#chart-content)').attr('class', 'item').attr('transform', function(d, i) {
             return 'translate(0, ' + groupHeight * i + ')';
-        }).selectAll('.dot').data(function (d) {
-            return d.data.filter(function (_) {
+        }).selectAll('.dot').data(function(d) {
+            return d.data.filter(function(_) {
                 return _.type === TimelineChart.TYPE.POINT;
             });
         }).enter();
 
-        var dots = groupDotItems.append('circle').attr('class', 'dot').attr('cx', function (d) {
+        var dots = groupDotItems.append('circle').attr('class', 'dot').attr('cx', function(d) {
             return x(d.at);
         }).attr('cy', groupHeight / 2).attr('r', 5);
 
@@ -122,16 +141,16 @@ var TimelineChart = function () {
 
             svg.select('.x.axis').call(xAxis);
 
-            svg.selectAll('circle.dot').attr('cx', function (d) {
+            svg.selectAll('circle.dot').attr('cx', function(d) {
                 return x(d.at);
             });
-            svg.selectAll('rect.interval').attr('x', function (d) {
+            svg.selectAll('rect.interval').attr('x', function(d) {
                 return x(d.from);
-            }).attr('width', function (d) {
+            }).attr('width', function(d) {
                 return x(d.to) - x(d.from);
             });
 
-            svg.selectAll('.interval-text').attr('x', function (d) {
+            svg.selectAll('.interval-text').attr('x', function(d) {
                 var positionData = getTextPositionData.call(this, d);
                 if (positionData.upToPosition - groupWidth - 10 < positionData.textWidth) {
                     return positionData.upToPosition;
@@ -139,19 +158,19 @@ var TimelineChart = function () {
                     return groupWidth;
                 }
                 return positionData.xPosition;
-            }).attr('text-anchor', function (d) {
+            }).attr('text-anchor', function(d) {
                 var positionData = getTextPositionData.call(this, d);
                 if (positionData.upToPosition - groupWidth - 10 < positionData.textWidth) {
                     return 'end';
                 }
                 return 'start';
-            }).attr('dx', function (d) {
+            }).attr('dx', function(d) {
                 var positionData = getTextPositionData.call(this, d);
                 if (positionData.upToPosition - groupWidth - 10 < positionData.textWidth) {
                     return '-0.5em';
                 }
                 return '0.5em';
-            }).text(function (d) {
+            }).text(function(d) {
                 var positionData = getTextPositionData.call(this, d);
                 var percent = (positionData.width - options.textTruncateThreshold) / positionData.textWidth;
                 if (percent < 1) {
@@ -188,7 +207,7 @@ var TimelineChart = function () {
                 tip: undefined,
                 textTruncateThreshold: 30
             };
-            Object.keys(ext).map(function (k) {
+            Object.keys(ext).map(function(k) {
                 return defaultOptions[k] = ext[k];
             });
             return defaultOptions;

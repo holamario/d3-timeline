@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>D3 Timeline Chart</title>
+
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/prism/0.0.1/prism.min.css">
+    <link rel="stylesheet" href="http://rawgithub.com/Caged/d3-tip/master/examples/example-styles.css">
+    <link rel="stylesheet" href="../dist/timeline-chart.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <section flex flex-full-center>
+        <div id="chart"></div>
+    </section>
+
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/prism/0.0.1/prism.min.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.min.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.6.7/d3-tip.min.js"></script>
+    <script type="text/javascript" src="../dist/timeline-chart.js"></script>
+
+    <script id="code">
+        'use strict';
+
+        const element = document.getElementById('chart');
+        const data = [ {
+            label: 'Type',
+            data: [{
+            label: 'National Account',
+            data: [{
+                label: 'Nation Acc GDP',
+                type: TimelineChart.TYPE.INTERVAL,
+                from: new Date([1970, 1, 1]),
+                to: new Date([1972, 1, 1])
+            }, {
+                label: 'Nation Acc Exp Eco',
+                type: TimelineChart.TYPE.INTERVAL,
+                from: new Date([1982, 1, 1]),
+                to: new Date([1984, 1, 12])
+            }]
+        }];
+
+        const timeline = new TimelineChart(element, data, {
+            tip: function(d) {
+                return d.at || `${d.from}<br>${d.to}`;
+            }
+        }).onVizChange(e => console.log(e));
+    </script>
+</body>
+
+</html>

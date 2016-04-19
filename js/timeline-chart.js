@@ -25,6 +25,7 @@ class TimelineChart {
         let height = elementHeight - margin.top - margin.bottom;
 
         let groupWidth = 200;
+        //what does it mean?
 
         let x = d3.time.scale()
             .domain([minDt, maxDt])
